@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
 import socket from "../services/socket";
 
-// import { Container } from './styles';
+import ListUsersToTalk from "../components/ListUsersToTalk/index";
+import Chat from "../components/Chat/index";
 
+import { useSelector } from "react-redux";
 function Main() {
   const [players, setPlayers] = useState([]);
+
+  const room = useSelector((state) => state.room);
 
   useEffect(() => {
     socket.on("allPlayers", (players) => {
       setPlayers(players);
     });
+    console.log(players);
 
     return () => {
       socket.off("AllPlayers", (players) => {
@@ -19,16 +24,10 @@ function Main() {
   }, []);
 
   return (
-    <>
-      <h1>dkakd</h1>
-      <ul>
-        {players.map(({ socket_id, name, number }) => (
-          <li key={socket_id}>
-            {name} - {number}
-          </li>
-        ))}
-      </ul>
-    </>
+    <div style={{ display: "flex", flexDirection: "row", height: "90vh" }}>
+      <ListUsersToTalk players={players} />
+      {room != null && <Chat />}
+    </div>
   );
 }
 
